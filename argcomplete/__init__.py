@@ -3,7 +3,8 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import os, sys, argparse, contextlib
+import os, sys, contextlib
+import ncloud.vendor.python.argparse
 from . import completers, my_shlex as shlex
 from .compat import USING_PYTHON2, str, sys_encoding, ensure_str, ensure_bytes
 from .completers import FilesCompleter
