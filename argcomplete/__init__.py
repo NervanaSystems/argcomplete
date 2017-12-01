@@ -1,4 +1,4 @@
-# Copyright 2012-2015, Andrey Kislyuk and argcomplete contributors.
+# Copyright 2012-2017, Andrey Kislyuk and argcomplete contributors.
 # Licensed under the Apache License. See https://github.com/kislyuk/argcomplete for more info.
 
 from __future__ import absolute_import, division, print_function, unicode_literals
@@ -15,6 +15,11 @@ debug_stream = sys.stderr
 
 def debug(*args):
     if _DEBUG:
+        if USING_PYTHON2:
+            # debug_stream has to be binary mode in Python 2.
+            # Attempting to write unicode directly uses the default ascii conversion.
+            # Convert any unicode to bytes, leaving non-string input alone.
+            args = [ensure_bytes(x) if isinstance(x, str) else x for x in args]
         print(file=debug_stream, *args)
 
 BASH_FILE_COMPLETION_FALLBACK = 79
@@ -194,12 +199,6 @@ class CompletionFinder(object):
         comp_line = os.environ["COMP_LINE"]
         comp_point = int(os.environ["COMP_POINT"])
 
-        # Adjust comp_point for wide chars
-        if USING_PYTHON2:
-            comp_point = len(comp_line[:comp_point].decode(sys_encoding))
-        else:
-            comp_point = len(comp_line.encode(sys_encoding)[:comp_point].decode(sys_encoding))
-
         comp_line = ensure_str(comp_line)
         cword_prequote, cword_prefix, cword_suffix, comp_words, last_wordbreak_pos = split_line(comp_line, comp_point)
 
@@ -211,8 +210,11 @@ class CompletionFinder(object):
         start = int(os.environ["_ARGCOMPLETE"]) - 1
         comp_words = comp_words[start:]
 
-        debug("\nLINE: '{l}'\nPREQUOTE: '{pq}'\nPREFIX: '{p}'".format(l=comp_line, pq=cword_prequote, p=cword_prefix),
-              "\nSUFFIX: '{s}'".format(s=cword_suffix),
+        debug("\nLINE: {!r}".format(comp_line),
+              "\nPOINT: {!r}".format(comp_point),
+              "\nPREQUOTE: {!r}".format(cword_prequote),
+              "\nPREFIX: {!r}".format(cword_prefix),
+              "\nSUFFIX: {!r}".format(cword_suffix),
               "\nWORDS:", comp_words)
 
         completions = self._get_completions(comp_words, cword_prefix, cword_prequote, last_wordbreak_pos)
