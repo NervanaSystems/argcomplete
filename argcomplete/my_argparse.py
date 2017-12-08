@@ -1,9 +1,9 @@
 # Copyright 2012-2013, Andrey Kislyuk and argcomplete contributors.
 # Licensed under the Apache License. See https://github.com/kislyuk/argcomplete for more info.
 
-from argparse import ArgumentParser, ArgumentError, SUPPRESS, _SubParsersAction
-from argparse import OPTIONAL, ZERO_OR_MORE, ONE_OR_MORE, REMAINDER, PARSER
-from argparse import _get_action_name, _
+from ncloud.vendor.python.argparse import ArgumentParser, ArgumentError, SUPPRESS, _SubParsersAction
+from ncloud.vendor.python.argparse import OPTIONAL, ZERO_OR_MORE, ONE_OR_MORE, REMAINDER, PARSER
+from ncloud.vendor.python.argparse import _get_action_name, _
 
 _num_consumed_args = {}
 
